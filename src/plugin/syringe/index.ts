@@ -192,6 +192,7 @@ export class Syringe {
 
     private init(): void {
         ready(() => {
+            console.log('===============>> document loaded! <<==================');
             this.documentEnd = true;
             this.codePatch();
         });
@@ -213,6 +214,7 @@ export class Syringe {
             this.logger.debug(`没有节点在注入前加载`);
         }
         this.observer = new MutationObserver((mutations) => {
+            console.log('开始注入========>', this.documentEnd);
             for (const mutation of mutations) {
                 if (mutation.type === 'attributes') {
                     this.translateNode(mutation.target);
@@ -220,6 +222,7 @@ export class Syringe {
                     for (const node of mutation.addedNodes) {
                         this.translateNode(node);
                         if (this.documentEnd && node.childNodes) {
+                            console.log('进入 childNodes 的 childNodes');
                             const nodeIterator = document.createNodeIterator(node);
                             let childNode = nodeIterator.nextNode();
                             while (childNode) {
@@ -480,8 +483,10 @@ export class Syringe {
         }
 
         if (isElement(node, 'p') && node.classList.contains('gpc')) {
+            console.log('start clone', node, node.innerText);
             /* 兼容熊猫书签，单独处理页码，保留原页码Element，防止熊猫书签取不到报错 */
             this.cloneAndPrependElement(node);
+            console.log('add clone');
         }
 
         if (isElement(node, 'div') && node.id === 'gdd') {
